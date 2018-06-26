@@ -21,4 +21,4 @@ $ yarn start
 ## Known issues
  - Currently it only has minimum functions
  - The contract hash is hardcoded in the code, you may need to update it with your own.
- - By default, it runs on the local privatenet which deployed with [nos-local](https://github.com/nos/nos-local)
+ - By default, it runs on the local privatenet which is deployed with [nos-local](https://github.com/nos/nos-local)
