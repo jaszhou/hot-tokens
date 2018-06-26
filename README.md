@@ -1,6 +1,3 @@
-<p align="center">
-  <img src="./logo.png" width="150px" />
-</p>
 
 <h1 align="center">Hot Tokens</h1>
 
