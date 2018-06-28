@@ -2,128 +2,115 @@ import React from "react";
 import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import { react } from "@nosplatform/api-functions";
-import utils from "../../utils";
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
+
+import Header from "./../../components/Header";
+import NOSActions from "./../../components/NOSActions";
+import OpponentChoice from "./../../components/OpponentChoice";
+import AddToken from "./../../components/AddToken";
+import Content from "./../../components/Content";
+import '../../assets/bootstrap.min.css';
 
 const { injectNOS, nosProps } = react.default;
 
+
+
+
 const styles = {
-  choices: {
-    display: "flex",
-    "flex-direction": "column",
-    "align-items": "center"
+  "@import": "https://fonts.googleapis.com/css?family=Source+Sans+Pro",
+  "@global html, body": {
+    fontFamily: "Source Sans Pro",
+    margin: 0,
+    padding: 0,
+    backgroundColor: "#ffffff"
   },
-  input: {
-    width: "400px",
-    height: "20px",
-    padding: "10px",
-    border: "none",
-    outline: "none",
-    backgroundColor: "rgb(243,243,243)",
-    color: "black",
-    margin: "5px",
-    "::placeholder": {
-      color: "rgb(203,203,203)"
-    }
+  App: {
+    textAlign: "center"
   },
-  disabled: {
-    backgroundColor: "white"
+  intro: {
+    fontSize: "large"
   },
-  button: {
-    position: "absolute",
-    right: "10px",
-    top: "10px",
-    height: "30px",
-    width: "60px"
-  },
-  inputBox: {
-    position: "relative"
+  lineBreak: {
+    width: "75%",
+    borderTop: "1px solid #333333",
+    margin: "32px auto"
   }
 };
 
 
 
-class TableRow extends React.Component {
-
+class App extends React.Component {
   constructor(props) {
-       super(props);
-       this.state = {
-          header: "Header from props...",
-          content: "Content from props...",
-          value: ""
-       }
+    super(props);
+
+    this.state = this.getInitialState();
+
+    this.componentDidMount();
+
+  }
+
+  getInitialState = () => {
+
+    return {
+      playerAddress: "",
+      contract: "fec29aa6a8215e1a40d2601a3031f3cc78db7a7d"
+
+    };
+  };
+
+  handleAlert = async func => alert(await func);
+
+  componentDidMount = async () => {
+    try {
+      const playerAddress = await this.props.nos.getAddress();
+
+      console.log("address: "+playerAddress);
+
+      await this.setState({
+        playerAddress
+
+      });
+    } catch (e) {
+      return;
     }
 
-  getVote = async () => {
-    console.log("Invoke 'getVote'");
-    this.handleGetStorage("0a1948712e880db364e8e06e68ae8c614a399c05",'NAS',true,false);
-  };
-
-  makeVote = async (name) => {
-    console.log("Invoke 'makeVote'");
-    this.handleInvoke("0a1948712e880db364e8e06e68ae8c614a399c05", "add", [name]);
   };
 
 
 
-  handleInvoke = (scriptHash, operation, args) =>
-      this.props.nos
-        .invoke({ scriptHash, operation, args })
-        .then(txid => alert(`Invoke txid: ${txid} `))
-        .catch(err => alert(`Error: ${err.message}`));
 
-  handleGetStorage = async (scriptHash, key, encodeInput, decodeOutput) =>
-      this.props.nos
-        .getStorage({ scriptHash, key, encodeInput, decodeOutput })
-        .then(txid => alert(`Invoke txid: ${txid} `))
-        .catch(err => alert(`Error: ${err.message}`));
+render = () => {
+  const { classes } = this.props;
 
-  handleGetValue = async (scriptHash, key, encodeInput, decodeOutput) =>
-            this.props.nos
-              .getStorage({ scriptHash, key, encodeInput, decodeOutput })
-              .then(txid => this.setState({value:txid}))
-              .catch(err => alert(`Error: ${err.message}`));
+  return (
+    <div className={classes.App}>
+      <Header title="The Top Rated Tokens" />
+      <p className={classes.intro}>
+      You can vote for the most profitable tokens on exchange
+         at the moment.
+      </p>
 
-  getValue = async (key) => {
-            return this.handleGetValue("0a1948712e880db364e8e06e68ae8c614a399c05",key,true,false)
-          };
-
-   render() {
-
-     const { classes } = this.props;
+      <hr className={classes.lineBreak} />
 
 
-     this.getValue(this.props.data.name);
-
-     // this.setState({
-     //   age: this.getValue(this.props.data.name),
-     // });
-
-     // console.log(this.state.value);
-
-      return (
-         <tr>
-            <td>{this.props.data.id}</td>
-            <td>{this.props.data.name}</td>
-            <td>{this.state.value}</td>
-            <td>
-
-            <button onClick={() => this.makeVote(this.props.data.name)}>
-              Vote
-            </button>
+     <Content  contract = {this.state.contract}/>
 
 
-            </td>
-         </tr>
-      );
-   }
-}
 
-TableRow.propTypes = {
-  classes: PropTypes.objectOf(PropTypes.any).isRequired,
-  nos: nosProps.isRequired
+      <hr className={classes.lineBreak} />
+
+
+    </div>
+  );
 };
 
-export default injectNOS(injectSheet(styles)(TableRow));
+
+}
+
+
+App.propTypes = {
+  classes: PropTypes.object.isRequired
+
+};
+
+export default injectSheet(styles)(App);

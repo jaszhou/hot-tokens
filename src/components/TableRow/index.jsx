@@ -44,7 +44,6 @@ const styles = {
 };
 
 
-
 class TableRow extends React.Component {
 
   constructor(props) {
@@ -53,17 +52,23 @@ class TableRow extends React.Component {
           header: "Header from props...",
           content: "Content from props...",
           value: ""
-       }
+       };
+
+
     }
+
+    componentDidMount = async () => {
+      this.getValue(this.props.data);
+    };
 
   getVote = async () => {
     console.log("Invoke 'getVote'");
-    this.handleGetStorage("0a1948712e880db364e8e06e68ae8c614a399c05",'NAS',true,false);
+    this.handleGetStorage(this.props.contract,'NAS',true,true);
   };
 
   makeVote = async (name) => {
     console.log("Invoke 'makeVote'");
-    this.handleInvoke("0a1948712e880db364e8e06e68ae8c614a399c05", "add", [name]);
+    this.handleInvoke(this.props.contract, "add", [name]);
   };
 
 
@@ -87,7 +92,8 @@ class TableRow extends React.Component {
               .catch(err => alert(`Error: ${err.message}`));
 
   getValue = async (key) => {
-            return this.handleGetValue("0a1948712e880db364e8e06e68ae8c614a399c05",key,true,false)
+            // console.log("call storage: " + key);
+            return this.handleGetValue(this.props.contract,key,true,false)
           };
 
    render() {
@@ -95,7 +101,10 @@ class TableRow extends React.Component {
      const { classes } = this.props;
 
 
-     this.getValue(this.props.data.name);
+// {this.getValue(this.props.data)};
+     //alert(this.props.contract);
+
+
 
      // this.setState({
      //   age: this.getValue(this.props.data.name),
@@ -104,13 +113,16 @@ class TableRow extends React.Component {
      // console.log(this.state.value);
 
       return (
+
+
+
          <tr>
-            <td>{this.props.data.id}</td>
-            <td>{this.props.data.name}</td>
+
+            <td>{this.props.data}</td>
             <td>{this.state.value}</td>
             <td>
 
-            <button onClick={() => this.makeVote(this.props.data.name)}>
+            <button onClick={() => this.makeVote(this.props.data)}>
               Vote
             </button>
 

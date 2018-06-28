@@ -2,12 +2,12 @@ import React from "react";
 import injectSheet from "react-jss";
 import PropTypes from "prop-types";
 import { react } from "@nosplatform/api-functions";
+import utils from "../../utils";
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import TableRow from "../TableRow";
 
 const { injectNOS, nosProps } = react.default;
-
-
-
-
 const styles = {
   choices: {
     display: "flex",
@@ -45,20 +45,36 @@ const styles = {
 
 
 class AddToken extends React.Component {
-   constructor(props) {
-      super(props);
-
-
+   constructor() {
+      super();
       this.state = {
-         token: 'NEO'
+         token_name: ""
       }
       this.updateState = this.updateState.bind(this);
-   };
-   updateState(e) {
-      this.setState({token: e.target.value});
-
-
    }
+
+
+   updateState(e) {
+     this.setState({token_name: e.target.value});
+
+   };
+
+
+
+   makeVote = async (name) => {
+     console.log("Invoke 'makeVote'");
+     this.handleInvoke(this.props.contract, "add", [name]);
+   };
+
+
+
+   handleInvoke = (scriptHash, operation, args) =>
+       this.props.nos
+         .invoke({ scriptHash, operation, args })
+         .then(txid => alert(`Invoke txid: ${txid} `))
+         .catch(err => alert(`Error: ${err.message}`));
+
+
 
    handleAlert = async func => alert(await func);
 
@@ -67,12 +83,13 @@ class AddToken extends React.Component {
 
       return (
          <div>
-            <input type = "text" value = {this.state.token}
+            Add New Token: <input type = "text" value = {this.state.token_name}
                onChange = {this.updateState} />
-            <h4>current address: {this.props.playerAddress}</h4>
 
-            <button onClick={() => this.handleAlert(this.state.token)}>
-              Vote
+
+            <button onClick={() => this.makeVote(this.state.token_name)}>
+
+              Add
             </button>
          </div>
       );
@@ -81,15 +98,9 @@ class AddToken extends React.Component {
 
 
 AddToken.propTypes = {
-  playerAddress: PropTypes.string.isRequired,
-  classes: PropTypes.object.isRequired,
-
-  classes: PropTypes.objectOf(PropTypes.any).isRequired
-
+  classes: PropTypes.objectOf(PropTypes.any).isRequired,
+  nos: nosProps.isRequired
 };
 
 
-
-AddToken.defaultProps = {};
-
-export default injectSheet(styles)(AddToken);
+export default injectNOS(injectSheet(styles)(AddToken));

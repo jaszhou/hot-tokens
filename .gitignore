@@ -1,2 +1,7 @@
 dist
 node_modules
+.cache
+.git
+1
+lib
+packages

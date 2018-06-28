@@ -14,6 +14,8 @@
 
 from boa.interop.Neo.Runtime import Log, Notify
 from boa.interop.Neo.Storage import Get,Put,Delete,GetContext
+from boa.builtins import concat, list
+from boa.interop.Neo.Runtime import Serialize, Deserialize
 
 def Main(operation, args):
 
@@ -25,6 +27,8 @@ def Main(operation, args):
 
         item_key = args[0]
 
+
+
         item_value = Get(context, item_key)
         msg = ["Value read from storage:", item_value]
         Notify(msg)
@@ -33,12 +37,35 @@ def Main(operation, args):
             Notify("Storage key not yet set. Setting to 1")
             item_value = 1
 
+            # Store token list
+
+            temp = Get(context, 'token_list')
+
+            if not temp == False:
+                #tokens = Deserialize(temp)
+                name = concat(',',item_key)
+                tokens = concat(temp,name)
+                #a_save_s = Serialize(tokens)
+                Put(context, 'token_list', tokens)
+
+                msg = ["New value written into list:", tokens]
+                Notify(msg)
+
+
+            else:
+                #a_save_s = Serialize(item_key)
+                Put(context, 'token_list', item_key)
+                
+
         else:
             Notify("Storage key already set. Incrementing by 1")
             item_value += 1
 
         # Store the new value
         Put(context, item_key, item_value)
+
+
+
         msg = ["New value written into storage:", item_value]
         Notify(msg)
 

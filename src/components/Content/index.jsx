@@ -6,6 +6,7 @@ import utils from "../../utils";
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import TableRow from "../TableRow";
+import AddToken from "./../../components/AddToken";
 
 const { injectNOS, nosProps } = react.default;
 
@@ -30,11 +31,17 @@ const styles = {
   }
 };
 
+
 class Content extends React.Component {
+
+
    constructor() {
       super();
       this.state = {
          value: 0,
+         list: "",
+         tokens:[],
+         values:[],
          data:
          [
             {
@@ -55,9 +62,76 @@ class Content extends React.Component {
          ]
       }
    }
+
+
+
+   getVote = async () => {
+     console.log("Invoke 'getVote'");
+     this.handleGetStorage(this.props.contract,'NAS',true,false);
+   };
+
+   makeVote = async (name) => {
+     console.log("Invoke 'makeVote'");
+     this.handleInvoke(this.props.contract, "add", [name]);
+   };
+
+
+
+   handleInvoke = (scriptHash, operation, args) =>
+       this.props.nos
+         .invoke({ scriptHash, operation, args })
+         .then(txid => alert(`Invoke txid: ${txid} `))
+         .catch(err => alert(`Error: ${err.message}`));
+
+   handleGetStorage = async (scriptHash, key, encodeInput, decodeOutput) =>
+       this.props.nos
+         .getStorage({ scriptHash, key, encodeInput, decodeOutput })
+         .then(txid => alert(`Invoke txid: ${txid} `))
+         .catch(err => alert(`Error: ${err.message}`));
+
+   handleGetValue = async (i,scriptHash, key, encodeInput, decodeOutput) =>
+             this.props.nos
+               .getStorage({ scriptHash, key, encodeInput, decodeOutput })
+               .then(txid => this.setState({value:txid}))
+               .catch(err => alert(`Error: ${err.message}`));
+
+   handleGetList = async (scriptHash, key, encodeInput, decodeOutput) =>
+                         this.props.nos
+                           .getStorage({ scriptHash, key, encodeInput, decodeOutput })
+                           .then(txid => this.setState({list:txid}))
+                           .catch(err => alert(`Error: ${err.message}`));
+
+
+   getValue = async (i,key) => {
+             return this.handleGetValue(i,this.props.contract,key,true,false)
+           };
+
+   getList = async (key) => {
+                     return this.handleGetList(this.props.contract,key,true,true)
+                   };
+
+  handleAlert = async func => alert(await func);
+
+
+
    render() {
 
+     //alert(this.props.contract);
+
      const { classes, nos } = this.props;
+
+     this.getList('token_list');
+
+     this.state.tokens = this.state.list.split(",");
+
+     // var arrayLength = this.state.tokens.length;
+     //  for (var i = 0; i < arrayLength; i++) {
+     //      //alert(myStringArray[i]);
+     //      //Do something
+     //      this.getValue(i,this.state.tokens[i]);
+     //  }
+
+     //alert(this.state.tokens);
 
       return (
          <div>
@@ -68,16 +142,23 @@ class Content extends React.Component {
               <thead>
                 <tr>
                   <th>Token</th>
-                  <th>BlockChain Name</th>
                   <th>Total Votes Received</th>
                   <th>Vote</th>
                 </tr>
               </thead>
               <tbody>
-                 {this.state.data.map((person, i) => <TableRow key = {i}
-                    data = {person}  />)}
+
+
+                 {this.state.tokens.map((token, i) => <TableRow key = {i}
+                    data = {token}
+                    contract = {this.props.contract} />)}
               </tbody>
             </table>
+
+            <hr className={classes.lineBreak} />
+
+            <AddToken  contract = {this.props.contract} />
+
 
           </div>
          </div>
