@@ -71,7 +71,7 @@ class AddToken extends React.Component {
    handleInvoke = (scriptHash, operation, args) =>
        this.props.nos
          .invoke({ scriptHash, operation, args })
-         .then(txid => alert(`Invoke txid: ${txid} `))
+        // .then(txid => alert(`Invoke txid: ${txid} `))
          .catch(err => alert(`Error: ${err.message}`));
 
 

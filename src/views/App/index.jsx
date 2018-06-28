@@ -53,7 +53,7 @@ class App extends React.Component {
 
     return {
       playerAddress: "",
-      contract: "fec29aa6a8215e1a40d2601a3031f3cc78db7a7d"
+      contract: "8285708c3f8530e57d54628c07b687e48fa16f88"
 
     };
   };

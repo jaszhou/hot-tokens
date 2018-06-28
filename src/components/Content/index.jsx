@@ -41,26 +41,11 @@ class Content extends React.Component {
          value: 0,
          list: "",
          tokens:[],
-         values:[],
-         data:
-         [
-            {
-               "id":1,
-               "name":"NEO",
-               "age":"0"
-            },
-            {
-               "id":2,
-               "name":"NAS",
-               "age":"0"
-            },
-            {
-               "id":3,
-               "name":"BTC",
-               "age":"0"
-            }
-         ]
+         values:[]
+
       }
+
+
    }
 
 
@@ -80,7 +65,7 @@ class Content extends React.Component {
    handleInvoke = (scriptHash, operation, args) =>
        this.props.nos
          .invoke({ scriptHash, operation, args })
-         .then(txid => alert(`Invoke txid: ${txid} `))
+         //.then(txid => alert(`Invoke txid: ${txid} `))
          .catch(err => alert(`Error: ${err.message}`));
 
    handleGetStorage = async (scriptHash, key, encodeInput, decodeOutput) =>
@@ -92,7 +77,10 @@ class Content extends React.Component {
    handleGetValue = async (i,scriptHash, key, encodeInput, decodeOutput) =>
              this.props.nos
                .getStorage({ scriptHash, key, encodeInput, decodeOutput })
-               .then(txid => this.setState({value:txid}))
+               .then(txid => {
+                  this.setState({value:txid});
+                  this.setState({tokens:this.state.list.split(",")});
+                })
                .catch(err => alert(`Error: ${err.message}`));
 
    handleGetList = async (scriptHash, key, encodeInput, decodeOutput) =>
@@ -103,26 +91,43 @@ class Content extends React.Component {
 
 
    getValue = async (i,key) => {
+
              return this.handleGetValue(i,this.props.contract,key,true,false)
            };
 
    getList = async (key) => {
+                    console.log("calling getList here: " + key);
                      return this.handleGetList(this.props.contract,key,true,true)
                    };
 
   handleAlert = async func => alert(await func);
 
+  componentDidMount = async () => {
 
+    const { nos } = this.props;
+
+    this.getList('token_list');
+
+    //this.state.tokens = this.state.list.split(",");
+
+    console.log(this.state.tokens.toString());
+
+  };
 
    render() {
+
+     // this.getList('token_list');
+     //
+     this.state.tokens = this.state.list.split(",");
+
+     console.log(this.state.tokens.toString() + "len: " +this.state.tokens.length);
+
+     // this.setState({tokens:this.state.list.split(",")});
 
      //alert(this.props.contract);
 
      const { classes, nos } = this.props;
 
-     this.getList('token_list');
-
-     this.state.tokens = this.state.list.split(",");
 
      // var arrayLength = this.state.tokens.length;
      //  for (var i = 0; i < arrayLength; i++) {
@@ -147,11 +152,12 @@ class Content extends React.Component {
                 </tr>
               </thead>
               <tbody>
-
-
-                 {this.state.tokens.map((token, i) => <TableRow key = {i}
+                 {
+                   this.state.tokens.map((token, i) => <TableRow key = {i}
                     data = {token}
-                    contract = {this.props.contract} />)}
+                    contract = {this.props.contract} />)
+                  }
+
               </tbody>
             </table>
 

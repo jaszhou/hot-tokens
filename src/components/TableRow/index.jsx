@@ -57,8 +57,17 @@ class TableRow extends React.Component {
 
     }
 
+  
     componentDidMount = async () => {
-      this.getValue(this.props.data);
+
+      console.log("key len: " + this.props.data.length);
+
+      if(this.props.data == null || this.props.data.length < 2){
+        console.log("trying to get empty key from storage");
+      }else {
+        this.getValue(this.props.data);
+      }
+
     };
 
   getVote = async () => {
@@ -76,7 +85,7 @@ class TableRow extends React.Component {
   handleInvoke = (scriptHash, operation, args) =>
       this.props.nos
         .invoke({ scriptHash, operation, args })
-        .then(txid => alert(`Invoke txid: ${txid} `))
+        //.then(txid => alert(`Invoke txid: ${txid} `))
         .catch(err => alert(`Error: ${err.message}`));
 
   handleGetStorage = async (scriptHash, key, encodeInput, decodeOutput) =>
@@ -92,13 +101,13 @@ class TableRow extends React.Component {
               .catch(err => alert(`Error: ${err.message}`));
 
   getValue = async (key) => {
-            // console.log("call storage: " + key);
+            console.log("call storage: " + key);
             return this.handleGetValue(this.props.contract,key,true,false)
           };
 
    render() {
 
-     const { classes } = this.props;
+     const { nos, classes } = this.props;
 
 
 // {this.getValue(this.props.data)};
@@ -106,27 +115,30 @@ class TableRow extends React.Component {
 
 
 
+
      // this.setState({
      //   age: this.getValue(this.props.data.name),
      // });
 
-     // console.log(this.state.value);
+     console.log("state value: " + this.state.value);
+     console.log("date value: " + this.props.data);
+
+     if(this.state.value == ''){
+         if(this.props.data == null || this.props.data.length < 2){
+           console.log("trying to get empty key from storage");
+         }else {
+           this.getValue(this.props.data);
+         }
+       }
 
       return (
-
-
-
          <tr>
-
             <td>{this.props.data}</td>
             <td>{this.state.value}</td>
             <td>
-
             <button onClick={() => this.makeVote(this.props.data)}>
               Vote
             </button>
-
-
             </td>
          </tr>
       );
